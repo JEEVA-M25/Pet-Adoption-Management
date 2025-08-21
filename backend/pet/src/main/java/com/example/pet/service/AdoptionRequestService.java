@@ -3,6 +3,7 @@ package com.example.pet.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.example.pet.model.AdoptionRequest;
@@ -29,31 +30,22 @@ public class AdoptionRequestService {
         return adoptRepo.findAll();
     }
 
-   public AdoptionRequest createAdoptionRequest(AdoptionRequest adoption) {
-    // Validate pet exists
-    Long petId = adoption.getPet().getId();
-    Pet pet = petRepo.findById(petId)
-            .orElseThrow(() -> new IllegalArgumentException("Pet not found with id: " + petId));
+ public AdoptionRequest createAdoptionRequest(AdoptionRequest adoptionRequest, String userEmail) {
+        // Get the authenticated user
+        User applicant = userRepo.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-    // Validate user exists
-    Long userId = adoption.getApplicant().getId();
-    User applicant = userRepo.findById(userId)
-            .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
+        // Set applicant information from the user entity
+        adoptionRequest.setApplicant(applicant);
+        adoptionRequest.setApplicantName(applicant.getName());
+        adoptionRequest.setApplicantEmail(applicant.getEmail());
+        adoptionRequest.setApplicantPhone(applicant.getPhone());
+        
+        adoptionRequest.setStatus("Pending");
+        adoptionRequest.setSubmissionDate(LocalDateTime.now());
 
-    // Check pet availability
-    if (!"Available".equalsIgnoreCase(pet.getAdoptionStatus())) {
-        throw new IllegalArgumentException("Pet is not available for adoption");
+        return adoptRepo.save(adoptionRequest);
     }
-
-    // Set default values
-    adoption.setStatus("Pending");
-    adoption.setSubmissionDate(LocalDateTime.now());
-    adoption.setApplicant(applicant);  // ✅ set the user
-    adoption.setPet(pet);              // ✅ ensure pet reference is set
-
-    return adoptRepo.save(adoption);
-}
-
     public void deleteAdoptionRequest(Long id) {
         AdoptionRequest request = adoptRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Adoption request not found"));
@@ -92,6 +84,15 @@ public AdoptionRequest updateAdoptionRequest(Long id, AdoptionRequest updatedReq
 
     return adoptRepo.save(existing);
 }
+    public void deleteOwnAdoptionRequest(Long requestId, String authEmail) {
+        AdoptionRequest request = adoptRepo.findById(requestId)
+            .orElseThrow(() -> new IllegalArgumentException("Adoption request not found"));
 
+        if (!request.getApplicant().getEmail().equals(authEmail)) {
+            throw new SecurityException("You can only delete your own adoption requests");
+        }
+
+        adoptRepo.delete(request);
+    }
 
 }

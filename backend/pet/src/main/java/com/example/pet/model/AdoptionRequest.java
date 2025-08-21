@@ -27,15 +27,15 @@ public class AdoptionRequest {
     @GeneratedValue(strategy =  GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Applicant name is required")
-    @Size(min = 2, message = "Applicant name must be at least 2 characters long")
+    // @NotBlank(message = "Applicant name is required")
+    // @Size(min = 2, message = "Applicant name must be at least 2 characters long")
     private String applicantName;
 
-    @NotBlank(message = "Applicant email is required")
+    // @NotBlank(message = "Applicant email is required")
     @Email(message = "Invalid email format")
     private String applicantEmail;
 
-    @NotBlank(message = "Applicant phone is required")
+    // @NotBlank(message = "Applicant phone is required")
     private String applicantPhone;
 
     private String status;   // ✅ fixed naming

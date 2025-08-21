@@ -24,10 +24,11 @@ public class CustomUserDetails implements UserDetails {
         return user.getPassword();
     }
 
-    @Override
+        @Override
     public String getUsername() {
-        return user.getUsername();
+        return user.getEmail(); // use email consistently
     }
+
 
     @Override
     public boolean isAccountNonExpired() { return true; }

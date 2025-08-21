@@ -1,6 +1,8 @@
 package com.example.pet.service;
 import com.example.pet.model.User;
 import com.example.pet.repository.UserRepository;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,11 +12,12 @@ import java.util.Optional;
 public class UserService {
 
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;  // <--- 
 
-    public UserService(UserRepository userRepository)
-    {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;   // <--- 
     }
     
     public User createUser(User user) {
@@ -24,6 +27,8 @@ public class UserService {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new IllegalArgumentException("Email already exists");
         }
+         // Hash password before saving
+    user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
@@ -53,7 +58,7 @@ public class UserService {
             }
 
             user.setUsername(updatedUser.getUsername());
-            user.setPassword(updatedUser.getPassword());
+            user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
             user.setEmail(updatedUser.getEmail());
             user.setRole(updatedUser.getRole());
             user.setShelter(updatedUser.getShelter());

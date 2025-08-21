@@ -1,6 +1,5 @@
 package com.example.pet.security;
 
-// import com.example.pet.security.CustomUserDetailsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -39,21 +38,24 @@ public class JwtFilter extends OncePerRequestFilter {
             String token = authHeader.substring(7);
             try {
                 String username = jwtUtil.extractUsername(token);
+
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
 
-                    if (jwtUtil.validateToken(token, userDetails)) {
-                        UsernamePasswordAuthenticationToken authenticationToken =
-                                new UsernamePasswordAuthenticationToken(
-                                        userDetails.getUsername(),
-                                        userDetails.getPassword(),
-                                        userDetails.getAuthorities()
-                                );
-                        authenticationToken.setDetails(
-                                new WebAuthenticationDetailsSource().buildDetails(request)
-                        );
-                        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-                    }
+                    // ✅ Corrected line: store UserDetails object in Authentication
+                   if (jwtUtil.validateToken(token, userDetails)) {
+    UsernamePasswordAuthenticationToken authenticationToken =
+            new UsernamePasswordAuthenticationToken(
+                    userDetails,    // store the full UserDetails
+                    null,           // no credentials needed
+                    userDetails.getAuthorities()
+            );
+    authenticationToken.setDetails(
+            new WebAuthenticationDetailsSource().buildDetails(request)
+    );
+    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+}
+
                 }
             } catch (Exception e) {
                 Map<String, String> responseMap = new HashMap<>();

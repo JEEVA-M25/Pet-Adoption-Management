@@ -15,7 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableMethodSecurity(prePostEnabled = true) // allows @PreAuthorize
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     @Autowired
@@ -31,14 +31,16 @@ public class SecurityConfig {
                 // User registration POST is open
                 .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
                 
-                // Other /api/users endpoints require authentication
-                .requestMatchers("/api/users/**").authenticated()
+                // Only authenticated users can create adoption requests
+                .requestMatchers(HttpMethod.POST, "/api/adoption-requests").authenticated()
                 
                 // All other endpoints require authentication
                 .anyRequest().authenticated()
             )
+            // Stateless session (JWT)
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
+        // Add JWT filter
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

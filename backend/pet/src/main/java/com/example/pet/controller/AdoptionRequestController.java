@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
 
 import com.example.pet.model.AdoptionRequest;
 import com.example.pet.service.AdoptionRequestService;
 
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/adoption-requests")
@@ -36,19 +36,16 @@ public class AdoptionRequestController {
         return adoptService.getAllAdoptionRequests();
     }
 
-    @PostMapping
-    public ResponseEntity<?> createAdoptionRequest(@Valid @RequestBody AdoptionRequest adoption)
-    {
-        try{
-            AdoptionRequest created = adoptService.createAdoptionRequest(adoption);
-            return new ResponseEntity<>(created,HttpStatus.CREATED);
-        }
-        catch(IllegalArgumentException ex)
-        {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message",ex.getMessage()));
-        }
+@PostMapping
+    public ResponseEntity<AdoptionRequest> createAdoptionRequest(
+            @RequestBody AdoptionRequest adoptionRequest,
+            Authentication authentication) {
+        
+        String userEmail = authentication.getName(); // Get the authenticated user's email
+        AdoptionRequest createdRequest = adoptService.createAdoptionRequest(adoptionRequest, userEmail);
+        return ResponseEntity.ok(createdRequest);
     }
-   
+
         @DeleteMapping("/{id}")
 public ResponseEntity<String> deleteAdoptionRequest(@PathVariable Long id) {
     try {
@@ -82,6 +79,15 @@ public ResponseEntity<?> updateAdoptionRequestStatus(
     }
 }
 
+    @DeleteMapping("/me/{id}")
+    public ResponseEntity<?> deleteOwnAdoptionRequest(
+            @PathVariable Long id,
+            Authentication authentication) {
+
+        String email = authentication.getName(); // JWT auth provides email
+        adoptService.deleteOwnAdoptionRequest(id, email);
+        return ResponseEntity.ok().build();
+    }
 
 
 }
