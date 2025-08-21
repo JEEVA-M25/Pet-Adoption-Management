@@ -94,5 +94,9 @@ public AdoptionRequest updateAdoptionRequest(Long id, AdoptionRequest updatedReq
 
         adoptRepo.delete(request);
     }
+    // Add this method to your AdoptionRequestService class
+public List<AdoptionRequest> getMyAdoptionRequests(String userEmail) {
+    return adoptRepo.findByApplicantEmail(userEmail);
+}
 
 }

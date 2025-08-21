@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.pet.model.Pet;
@@ -12,7 +13,6 @@ import com.example.pet.model.Shelter;
 import com.example.pet.model.User;
 import com.example.pet.repository.ShelterRepository;
 import com.example.pet.repository.UserRepository;
-
 import jakarta.transaction.Transactional;
 
 @Service
@@ -20,10 +20,13 @@ public class ShelterService {
 
     private final ShelterRepository repository;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder; // ← add this
 
-    public ShelterService(ShelterRepository repository, UserRepository userRepository) {
+    public ShelterService(ShelterRepository repository, UserRepository userRepository,
+                          PasswordEncoder passwordEncoder) { // ← inject here
         this.repository = repository;
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder; // ← assign
     }
 
 
@@ -32,43 +35,70 @@ public class ShelterService {
                 .orElseThrow(() -> new RuntimeException("Shelter not found with id: " + shelterId));
     }
 
+@Transactional
+public Shelter createShelter(Shelter shelter, String adminEmail) {
+    // Get the admin user who is creating the shelter
+    User adminUser = userRepository.findByEmail(adminEmail)
+            .orElseThrow(() -> new RuntimeException("Admin user not found"));
+    
+    // Verify the user is actually an ADMIN
+    if (!User.Role.ADMIN.equals(adminUser.getRole())) {
+        throw new RuntimeException("Only ADMIN users can create shelters");
+    }
+
+    // Step 1: Create the shelter with the admin
+    Shelter newShelter = new Shelter();
+    newShelter.setName(shelter.getName());
+    newShelter.setAddress(shelter.getAddress());
+    newShelter.setPhone(shelter.getPhone());
+    newShelter.setAdmin(adminUser);  // Set the creating admin as shelter admin
+    newShelter.setUsers(new ArrayList<>());
+
+    // Save the shelter
+    Shelter savedShelter = repository.save(newShelter);
+
+    // Update the admin user to reference the shelter
+    adminUser.setShelter(savedShelter);
+    userRepository.save(adminUser);
+
+    return savedShelter;
+}
+
     public Page<Shelter> getAllShelters(Pageable pageable) {
         return repository.findAll(pageable);
     }
 @Transactional
-public Shelter createShelter(Shelter shelter) {
-    // Step 1: Save empty shelter first
-    Shelter savedShelter = repository.save(new Shelter(
-            null,
-            shelter.getName(),
-            shelter.getAddress(),
-            shelter.getPhone(),
-            null,
-            new ArrayList<>()
-    ));
+public User addOrgUserToShelter(Long shelterId, User orgUser, String adminEmail) {
+    // Get the shelter
+    Shelter shelter = repository.findById(shelterId)
+            .orElseThrow(() -> new RuntimeException("Shelter not found with id: " + shelterId));
 
-    // Step 2: Save admin if present
-    if (shelter.getAdmin() != null) {
-        User admin = shelter.getAdmin();
-        admin.setRole(User.Role.ADMIN);
-        admin.setShelter(savedShelter);
-        admin = userRepository.save(admin);
-        savedShelter.setAdmin(admin);
+    // Get the admin user making the request
+    User admin = userRepository.findByEmail(adminEmail)
+            .orElseThrow(() -> new RuntimeException("Admin user not found"));
+
+    // SECURITY CHECK: Verify the admin is actually the admin of this shelter
+    if (shelter.getAdmin() == null || !shelter.getAdmin().getId().equals(admin.getId())) {
+        throw new RuntimeException("Only the shelter's admin can add ORG_USERs");
     }
 
-    // Step 3: Save ORG_USERS
-    if (shelter.getUsers() != null) {
-        List<User> savedUsers = new ArrayList<>();
-        for (User u : shelter.getUsers()) {
-            u.setRole(User.Role.ORG_USER);
-            u.setShelter(savedShelter);
-            savedUsers.add(userRepository.save(u));
-        }
-        savedShelter.setUsers(savedUsers);
+    // Check if user already exists with this email
+    if (userRepository.existsByEmail(orgUser.getEmail())) {
+        throw new RuntimeException("User with this email already exists");
     }
 
-    // Step 4: Save shelter with relationships
-    return repository.save(savedShelter);
+    // Set up the new ORG_USER
+    orgUser.setShelter(shelter);
+    orgUser.setRole(User.Role.ORG_USER);
+    orgUser.setPassword(passwordEncoder.encode(orgUser.getPassword()));
+
+    User savedUser = userRepository.save(orgUser);
+    
+    // Add to shelter's users list
+    shelter.getUsers().add(savedUser);
+    repository.save(shelter);
+
+    return savedUser;
 }
 
 // @Transactional
@@ -156,29 +186,6 @@ public Shelter createShelter(Shelter shelter) {
     public List<User> getUsersInShelter(Long shelterId) {
         Shelter shelter = getShelterById(shelterId);
         return shelter.getUsers();
-    }
-
-    @Transactional
-    public User addOrgUserToShelter(Long shelterId, User orgUser, Long adminId) {
-        Shelter shelter = repository.findById(shelterId)
-                .orElseThrow(() -> new RuntimeException("Shelter not found"));
-
-        User admin = userRepository.findById(adminId)
-                .orElseThrow(() -> new RuntimeException("Admin not found"));
-
-        if (!User.Role.ADMIN.equals(admin.getRole()) || admin.getShelter() == null
-                || !shelterId.equals(admin.getShelter().getId())) {
-            throw new RuntimeException("Only the shelter's admin can add ORG_USERs");
-        }
-
-        orgUser.setShelter(shelter);
-        orgUser.setRole(User.Role.ORG_USER);
-
-        User saved = userRepository.save(orgUser);
-        shelter.getUsers().add(saved);
-        repository.save(shelter);
-
-        return saved;
     }
 
     @Transactional

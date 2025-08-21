@@ -20,17 +20,24 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;   // <--- 
     }
     
-    public User createUser(User user) {
-         if (userRepository.existsByUsername(user.getUsername())) {
-            throw new IllegalArgumentException("Username already exists");
-        }
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new IllegalArgumentException("Email already exists");
-        }
-         // Hash password before saving
-    user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+    // In your createUser method, set default role to PUBLIC_USER
+public User createUser(User user) {
+    if (userRepository.existsByUsername(user.getUsername())) {
+        throw new IllegalArgumentException("Username already exists");
     }
+    if (userRepository.existsByEmail(user.getEmail())) {
+        throw new IllegalArgumentException("Email already exists");
+    }
+    
+    // Set default role to PUBLIC_USER if not specified
+    if (user.getRole() == null) {
+        user.setRole(User.Role.PUBLIC_USER);
+    }
+    
+    // Hash password before saving
+    user.setPassword(passwordEncoder.encode(user.getPassword()));
+    return userRepository.save(user);
+}
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -66,11 +73,13 @@ public class UserService {
         }).orElse(null);
     }
 
+// OR Method 2: Using findById with proper error handling
     public boolean deleteUser(Long id) {
-    return userRepository.findById(id).map(user -> {
-        userRepository.delete(user);
-        return true;
-    }).orElse(false);
-}
-
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isPresent()) {
+            userRepository.delete(userOptional.get());
+            return true;
+        }
+        return false;
+    }
 }

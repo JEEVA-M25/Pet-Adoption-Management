@@ -30,14 +30,14 @@ public class Shelter {
     @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Invalid phone number format")
     private String phone;
 
-        @OneToOne(cascade = CascadeType.PERSIST)
+        @OneToOne
     @JoinColumn(name = "admin_id")
     private User admin;
 
-    @OneToMany(mappedBy = "shelter", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "shelter",  orphanRemoval = true)
     @JsonManagedReference("shelter-users")
     private List<User> users = new ArrayList<>();
-
-
+    
+    // cascade = CascadeType.PERSIST,
 
 }

@@ -26,16 +26,17 @@ public class PetService {
     {
         return petRepo.findAll();
     }
-    public Pet createPet(Pet pet) {
-    User user = pet.getPostedBy(); // assume only ID is set
-    if (user != null) {
-        User persistedUser = userRepo.findById(user.getId())
-                              .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        pet.setPostedBy(persistedUser);       // set managed entity
-        persistedUser.getPets().add(pet);     // update user's pets list manually
-    }
-    return petRepo.save(pet);
-}
+// Updated method - automatically set the logged-in user as postedBy
+        public Pet createPet(Pet pet, String userEmail) {
+            User user = userRepo.findByEmail(userEmail)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+            
+            pet.setPostedBy(user);  // Set the authenticated user
+            user.getPets().add(pet); // Update user's pets list
+            
+            return petRepo.save(pet);
+        }
+
 
     public Optional<Pet> getPetById(Long id)
     {
