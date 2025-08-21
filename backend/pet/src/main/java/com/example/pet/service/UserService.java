@@ -29,21 +29,24 @@ public class UserService {
         return userRepository.findById(id);
     }
 
-    public User updateUser(Long id, User updatedUser) {
-        return userRepository.findById(id).map(user -> {
-            user.setUsername(updatedUser.getUsername());
-            user.setPassword(updatedUser.getPassword());
-            user.setEmail(updatedUser.getEmail());
-            user.setRole(updatedUser.getRole());
-            user.setShelter(updatedUser.getShelter());
-            return userRepository.save(user);
-        }).orElse(null);
+    public User updateUser(Long id, User updatedUser) 
+    {
+    return userRepository.findById(id).map(user -> {
+        user.setUsername(updatedUser.getUsername());
+        user.setPassword(updatedUser.getPassword());
+        user.setEmail(updatedUser.getEmail());
+        user.setRole(updatedUser.getRole());
+        user.setShelter(updatedUser.getShelter());
+        return userRepository.save(user);
+    }).orElse(null);
     }
 
+
     public boolean deleteUser(Long id) {
-        return userRepository.findById(id).map(user -> {
-            userRepository.delete(user);
-            return true;
-        }).orElse(false);
-    }
+    return userRepository.findById(id).map(user -> {
+        userRepository.delete(user);
+        return true;
+    }).orElse(false);
+}
+
 }

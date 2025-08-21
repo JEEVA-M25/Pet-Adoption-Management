@@ -55,12 +55,7 @@ public class ShelterController {
     public void deleteShelter(@PathVariable Long id) {
         service.deleteShelter(id);
     }
-        @GetMapping("/test")
-    public String test() {
-        return "Controller working!";
-    }
-
-
+    
     // 🔁 All pets in a particular shelter
     @GetMapping("/{id}/pets")
     public List<Pet> getPetsInShelter(@PathVariable Long id) {
@@ -72,4 +67,19 @@ public class ShelterController {
     public List<User> getUsersInShelter(@PathVariable Long id) {
         return service.getUsersInShelter(id);
     }
+
+    @PostMapping("/{shelterId}/users")
+    public User addOrgUser(@PathVariable Long shelterId,
+                       @RequestBody User orgUser,
+                       @RequestParam Long adminId) {
+
+    // adminId = ID of the admin performing the action
+    return service.addOrgUserToShelter(shelterId, orgUser, adminId);
+    }
+
+     @PutMapping("/{shelterId}/admin")
+    public User addAdminToShelter(@PathVariable Long shelterId, @RequestBody User admin) {
+        return service.addAdminToShelter(shelterId, admin);
+    }    
+
 }

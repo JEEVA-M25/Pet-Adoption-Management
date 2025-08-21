@@ -12,7 +12,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,27 +27,29 @@ public class AdoptionRequest {
     @GeneratedValue(strategy =  GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message =  "Pet ID is required")
-    private Long petId;
-
-    @NotBlank(message =  "Applicant name is required")
-    @Size(min = 2, message =  "Applicant name must be at least 2 characters long")
+    @NotBlank(message = "Applicant name is required")
+    @Size(min = 2, message = "Applicant name must be at least 2 characters long")
     private String applicantName;
 
-    @NotBlank(message =  "Applicant email is required")
-    @Email(message =  "Invalid email format")
+    @NotBlank(message = "Applicant email is required")
+    @Email(message = "Invalid email format")
     private String applicantEmail;
 
-    @NotBlank(message =  "Applicant phone is required")
+    @NotBlank(message = "Applicant phone is required")
     private String applicantPhone;
 
-   
-    private String Status ;
-    private LocalDateTime SubmissionDate;
+    private String status;   // ✅ fixed naming
+    private LocalDateTime submissionDate; // ✅ fixed naming
 
+     // Applicant (user who applied)
     @ManyToOne
     @JoinColumn(name = "applicant_id")
-    @JsonBackReference
+    @JsonBackReference("user-requests")
     private User applicant;
 
+    // Pet for this request
+    @ManyToOne
+    @JoinColumn(name = "pet_id")
+    @JsonBackReference("pet-requests")
+    private Pet pet;
 }

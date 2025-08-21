@@ -24,23 +24,28 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String name;
     private String username;
     private String password;
+    private String phone;
     private String email;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    // Shelter for ORG_USER
     @ManyToOne
     @JoinColumn(name = "shelter_id")
-    @JsonBackReference
+    @JsonBackReference("shelter-users")
     private Shelter shelter;
 
+    // Pets posted by this user
     @OneToMany(mappedBy = "postedBy", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonManagedReference("user-pets")
     private List<Pet> pets;
 
+    // Adoption requests by this user
     @OneToMany(mappedBy = "applicant", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonManagedReference("user-requests")
     private List<AdoptionRequest> requests;
 }

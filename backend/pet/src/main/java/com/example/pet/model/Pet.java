@@ -1,21 +1,16 @@
 package com.example.pet.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -45,17 +40,21 @@ public class Pet {
     @NotBlank(message =  "Adpotion status must not be blank")
     @Pattern(regexp = "Available|Pending|Adopted", message = "Adoption status must be Available, Pending, or Adopted")
     private String adoptionStatus;
-
-      @ManyToOne
-    @JoinColumn(name = "posted_by_id")
-    @JsonBackReference
-    private User postedBy;
     
     @Enumerated(EnumType.STRING)
     private AgeCategory ageCategory;
     
-     public enum AgeCategory {
+    public enum AgeCategory {
         PUPPY_KITTEN, JUVENILE, ADULT
     }
+  // Owner (user who posted)
+    @ManyToOne
+    @JoinColumn(name = "posted_by_id")
+    @JsonBackReference("user-pets")
+    private User postedBy;
 
+    // Adoption requests for this pet
+    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("pet-requests")
+    private List<AdoptionRequest> adoptionRequests;
 }
