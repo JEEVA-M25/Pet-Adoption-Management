@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+// import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -46,10 +46,10 @@ public class ShelterController {
         return service.getAllShelters(PageRequest.of(page, size));
     }
 
-    @PutMapping("/{id}")
-    public Shelter updateShelter(@PathVariable Long id, @RequestBody Shelter updated) {
-        return service.updateShelter(id, updated);
-    }
+    // @PutMapping("/{id}")
+    // public Shelter updateShelter(@PathVariable Long id, @RequestBody Shelter updated) {
+    //     return service.updateShelter(id, updated);
+    // }
 
     @DeleteMapping("/{id}")
     public void deleteShelter(@PathVariable Long id) {
@@ -77,9 +77,6 @@ public class ShelterController {
     return service.addOrgUserToShelter(shelterId, orgUser, adminId);
     }
 
-     @PutMapping("/{shelterId}/admin")
-    public User addAdminToShelter(@PathVariable Long shelterId, @RequestBody User admin) {
-        return service.addAdminToShelter(shelterId, admin);
-    }    
+        
 
 }

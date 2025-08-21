@@ -71,64 +71,64 @@ public Shelter createShelter(Shelter shelter) {
     return repository.save(savedShelter);
 }
 
-@Transactional
-public Shelter updateShelter(Long id, Shelter updated) {
-    Shelter existing = repository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Shelter not found"));
+// @Transactional
+// public Shelter updateShelter(Long id, Shelter updated) {
+//     Shelter existing = repository.findById(id)
+//             .orElseThrow(() -> new RuntimeException("Shelter not found"));
 
-    existing.setName(updated.getName());
-    existing.setAddress(updated.getAddress());
-    existing.setPhone(updated.getPhone());
+//     existing.setName(updated.getName());
+//     existing.setAddress(updated.getAddress());
+//     existing.setPhone(updated.getPhone());
 
-    // Update or add admin
-    if (updated.getAdmin() != null) {
-        User admin = updated.getAdmin();
-        admin.setRole(User.Role.ADMIN);
-        admin.setShelter(existing);
+//     // Update or add admin
+//     if (updated.getAdmin() != null) {
+//         User admin = updated.getAdmin();
+//         admin.setRole(User.Role.ADMIN);
+//         admin.setShelter(existing);
 
-        if (existing.getAdmin() == null) {
-            existing.setAdmin(userRepository.save(admin));
-        } else {
-            User existingAdmin = existing.getAdmin();
-            existingAdmin.setName(admin.getName());
-            existingAdmin.setUsername(admin.getUsername());
-            existingAdmin.setPassword(admin.getPassword());
-            existingAdmin.setEmail(admin.getEmail());
-            existingAdmin.setPhone(admin.getPhone());
-        }
-    }
+//         if (existing.getAdmin() == null) {
+//             existing.setAdmin(userRepository.save(admin));
+//         } else {
+//             User existingAdmin = existing.getAdmin();
+//             existingAdmin.setName(admin.getName());
+//             existingAdmin.setUsername(admin.getUsername());
+//             existingAdmin.setPassword(admin.getPassword());
+//             existingAdmin.setEmail(admin.getEmail());
+//             existingAdmin.setPhone(admin.getPhone());
+//         }
+//     }
 
-    // Update ORG_USERS
-    List<User> updatedUsers = updated.getUsers() != null ? updated.getUsers() : new ArrayList<>();
+//     // Update ORG_USERS
+//     List<User> updatedUsers = updated.getUsers() != null ? updated.getUsers() : new ArrayList<>();
 
-    // Remove deleted users
-    existing.getUsers().removeIf(existingUser ->
-            updatedUsers.stream().noneMatch(u -> u.getId() != null && u.getId().equals(existingUser.getId()))
-    );
+//     // Remove deleted users
+//     existing.getUsers().removeIf(existingUser ->
+//             updatedUsers.stream().noneMatch(u -> u.getId() != null && u.getId().equals(existingUser.getId()))
+//     );
 
-    // Add or update ORG_USERS
-    for (User user : updatedUsers) {
-        if (user.getId() == null) {
-            user.setRole(User.Role.ORG_USER);
-            user.setShelter(existing);
-            existing.getUsers().add(userRepository.save(user));
-        } else {
-            existing.getUsers().stream()
-                    .filter(u -> u.getId().equals(user.getId()))
-                    .findFirst()
-                    .ifPresent(u -> {
-                        u.setName(user.getName());
-                        u.setEmail(user.getEmail());
-                        u.setUsername(user.getUsername());
-                        u.setPhone(user.getPhone());
-                        u.setPassword(user.getPassword());
-                        u.setRole(User.Role.ORG_USER);
-                    });
-        }
-    }
+//     // Add or update ORG_USERS
+//     for (User user : updatedUsers) {
+//         if (user.getId() == null) {
+//             user.setRole(User.Role.ORG_USER);
+//             user.setShelter(existing);
+//             existing.getUsers().add(userRepository.save(user));
+//         } else {
+//             existing.getUsers().stream()
+//                     .filter(u -> u.getId().equals(user.getId()))
+//                     .findFirst()
+//                     .ifPresent(u -> {
+//                         u.setName(user.getName());
+//                         u.setEmail(user.getEmail());
+//                         u.setUsername(user.getUsername());
+//                         u.setPhone(user.getPhone());
+//                         u.setPassword(user.getPassword());
+//                         u.setRole(User.Role.ORG_USER);
+//                     });
+//         }
+//     }
 
-    return repository.save(existing);
-}
+//     return repository.save(existing);
+// }
 
     @Transactional
     public void deleteShelter(Long shelterId) {

@@ -26,15 +26,17 @@ public class PetController {
     
     private PetService petService;
 
-     public PetController (PetService petService)
+    public PetController (PetService petService)
     {
         this.petService = petService;
     }
+
     @PostMapping
     public ResponseEntity<Pet> createPet ( @Valid @RequestBody Pet pet)
     {
         return ResponseEntity.status(201).body(petService.createPet(pet));
     }
+    
     @GetMapping
     public ResponseEntity<List<Pet>> getAllPets()
     {

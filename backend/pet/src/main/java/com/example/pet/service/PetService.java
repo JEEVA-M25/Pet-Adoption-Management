@@ -6,26 +6,37 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.example.pet.model.Pet;
+import com.example.pet.model.User;
 import com.example.pet.repository.PetRepository;
+import com.example.pet.repository.UserRepository;
 
 @Service
 public class PetService {
 
     
     private PetRepository petRepo;
+    private UserRepository userRepo;
 
-    public PetService(PetRepository petRepo)
+    public PetService(PetRepository petRepo, UserRepository userRepo)
     {
         this.petRepo = petRepo;
+        this.userRepo = userRepo;
     }
     public List<Pet> getAllPets()
     {
         return petRepo.findAll();
     }
-    public Pet createPet(Pet pet)
-    {
-        return petRepo.save(pet);
+    public Pet createPet(Pet pet) {
+    User user = pet.getPostedBy(); // assume only ID is set
+    if (user != null) {
+        User persistedUser = userRepo.findById(user.getId())
+                              .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        pet.setPostedBy(persistedUser);       // set managed entity
+        persistedUser.getPets().add(pet);     // update user's pets list manually
     }
+    return petRepo.save(pet);
+}
+
     public Optional<Pet> getPetById(Long id)
     {
          return petRepo.findById(id);
