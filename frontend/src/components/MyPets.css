@@ -1,0 +1,371 @@
+/* MyPets.css */
+.my-pets {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background-color: var(--app-bg);
+}
+
+.my-pets-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.my-pets-header h2 {
+  color: var(--text-primary);
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.pets-count {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* Pets Grid */
+.pets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+  padding: 1rem 0;
+}
+
+/* Pet Card */
+.pet-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.pet-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+}
+
+.pet-image-container {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+}
+
+.pet-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.pet-card:hover .pet-image-container img {
+  transform: scale(1.05);
+}
+
+.status-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: white;
+}
+
+.status-badge.available {
+  background: linear-gradient(135deg, #48bb78, #38a169);
+}
+
+.status-badge.pending {
+  background: linear-gradient(135deg, #ed8936, #dd6b20);
+}
+
+.status-badge.adopted {
+  background: linear-gradient(135deg, #4299e1, #3182ce);
+}
+
+.pet-card-content {
+  padding: 1.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.pet-card-content h3 {
+  margin: 0 0 1rem 0;
+  color: var(--text-primary);
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.pet-details {
+  margin-bottom: 1.5rem;
+  flex-grow: 1;
+}
+
+.pet-details p {
+  margin: 0.5rem 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.pet-details .label {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-right: 0.5rem;
+}
+
+.description {
+  font-style: italic;
+  color: var(--text-secondary);
+  margin-top: 1rem !important;
+  line-height: 1.4;
+}
+
+.pet-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: auto;
+}
+
+.edit-btn, .delete-btn {
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  flex: 1;
+}
+
+.edit-btn {
+  background: linear-gradient(135deg, #4299e1, #3182ce);
+  color: white;
+}
+
+.edit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4);
+}
+
+.delete-btn {
+  background: linear-gradient(135deg, #e53e3e, #c53030);
+  color: white;
+}
+
+.delete-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.4);
+}
+
+/* No Pets State */
+.no-pets {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-secondary);
+}
+
+.no-pets-illustration {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.7;
+}
+
+.no-pets h3 {
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.no-pets p {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.cta-button {
+  padding: 1rem 2rem;
+  background: var(--navbar-bg);
+  color: var(--navbar-text);
+  border: none;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.cta-button:hover {
+  background: var(--navbar-hover-bg);
+  transform: translateY(-2px);
+}
+
+/* Not Logged In State */
+.not-logged-in {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-secondary);
+}
+
+.not-logged-in h2 {
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.not-logged-in p {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.login-btn {
+  padding: 1rem 2rem;
+  background: var(--navbar-bg);
+  color: var(--navbar-text);
+  border: none;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.login-btn:hover {
+  background: var(--navbar-hover-bg);
+  transform: translateY(-2px);
+}
+
+/* Loading State */
+.loading {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--border-color);
+  border-top: 4px solid var(--navbar-text);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Error State */
+.error {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: #e53e3e;
+  background: var(--card-bg);
+  border: 1px solid #fed7d7;
+  border-radius: 12px;
+  margin: 2rem auto;
+  max-width: 500px;
+}
+
+.error h3 {
+  margin-bottom: 1rem;
+}
+
+.retry-btn {
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: #e53e3e;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.retry-btn:hover {
+  background: #c53030;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .pets-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .my-pets {
+    padding: 1.5rem;
+  }
+  
+  .my-pets-header h2 {
+    font-size: 2rem;
+  }
+  
+  .pets-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.25rem;
+  }
+  
+  .pet-card-content {
+    padding: 1.25rem;
+  }
+  
+  .pet-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .pets-grid {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  .my-pets-header h2 {
+    font-size: 1.8rem;
+  }
+  
+  .no-pets, .not-logged-in {
+    padding: 3rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .my-pets {
+    padding: 1rem;
+  }
+  
+  .pet-image-container {
+    height: 200px;
+  }
+  
+  .pet-card-content h3 {
+    font-size: 1.2rem;
+  }
+  
+  .cta-button, .login-btn {
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+  }
+}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import * as api from '../utils/api';
 import './PetListing.css';
 
@@ -10,6 +11,7 @@ function PetListing() {
   const [speciesFilter, setSpeciesFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchPets = async () => {
@@ -35,6 +37,29 @@ function PetListing() {
     e.target.src = 'https://via.placeholder.com/300x250/667eea/white?text=Pet+Photo';
   };
 
+  const handleAdoptClick = async (petId, e) => {
+    e.stopPropagation();
+    
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    try {
+      await api.createAdoptionRequest({
+        pet: { id: petId },
+        status: 'Pending'
+      });
+      alert('Adoption request submitted successfully!');
+      
+      // Refresh pets to update status
+      const data = await api.getPets();
+      setPets(data);
+    } catch (err) {
+      alert('Error submitting adoption request: ' + err.message);
+    }
+  };
+
   const formatPetInfo = (species, breed) => {
     if (!breed || breed.toLowerCase() === 'unknown' || breed.toLowerCase() === 'mixed') {
       return species;
@@ -46,6 +71,12 @@ function PetListing() {
     <div className="pet-listing">
       <div className="content-container">
         <h2>🐾 Find Your Perfect Companion</h2>
+
+        {user && (
+          <div className="user-welcome">
+            <p>Welcome back, {user.email}! {user.role === 'ORG_USER' && 'You can add pets from your profile.'}</p>
+          </div>
+        )}
 
         <div className="filters">
           <label>
@@ -112,6 +143,35 @@ function PetListing() {
                   {pet.adoptionStatus === 'Pending' && '⏳ '}
                   {pet.adoptionStatus || 'Unknown'}
                 </p>
+                
+                {/* Adoption Button */}
+                {pet.adoptionStatus === 'Available' && user && (
+                  <button 
+                    className="adopt-btn"
+                    onClick={(e) => handleAdoptClick(pet.id, e)}
+                  >
+                    🐾 Adopt Me
+                  </button>
+                )}
+                
+                {pet.adoptionStatus === 'Available' && !user && (
+                  <button 
+                    className="adopt-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate('/login');
+                    }}
+                  >
+                    🐾 Login to Adopt
+                  </button>
+                )}
+                
+                {pet.adoptionStatus !== 'Available' && user && (
+                  <div className="adoption-status-note">
+                    {pet.adoptionStatus === 'Pending' && 'Adoption in progress'}
+                    {pet.adoptionStatus === 'Adopted' && 'Already adopted'}
+                  </div>
+                )}
               </div>
             ))}
           </div>

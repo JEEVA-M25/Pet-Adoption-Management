@@ -132,3 +132,69 @@
   border-color: var(--navbar-text, #d8cca3);
   background-color: var(--navbar-hover-bg, rgba(216, 204, 163, 0.1));
 }
+/* Navbar.css additions */
+.profile-menu-container {
+  position: relative;
+}
+
+.profile-btn {
+  background-color: transparent;
+  border: 2px solid transparent;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  color: var(--navbar-text, #d8cca3);
+}
+
+.profile-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  min-width: 200px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+}
+
+.profile-menu .profile-info {
+  margin-bottom: 0.5rem;
+}
+
+.profile-menu .profile-info p {
+  margin: 0.25rem 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.profile-menu a, .profile-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem 0;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.profile-menu a:hover, .profile-menu button:hover {
+  color: var(--navbar-text);
+}
+
+.profile-menu hr {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 0.5rem 0;
+}
+
+.logout-btn {
+  color: #e53e3e !important;
+}
