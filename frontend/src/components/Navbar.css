@@ -1,0 +1,134 @@
+/* Navbar.css - Updated with Sticky Navigation */
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--navbar-bg, #456268);
+  color: var(--navbar-text, #d8cca3);
+  padding: 1rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Optional: Add backdrop blur for modern effect */
+.navbar {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.navbar-links {
+  list-style: none;
+  display: flex;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-links li {
+  position: relative;
+}
+
+/* Common button style for all nav items */
+.navbar-links li button {
+  background-color: transparent;
+  border: 2px solid transparent;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+/* Hover effect without layout shift */
+.navbar-links li button:hover {
+  transform: translateY(-1px);
+}
+.navbar-links li button:hover {
+  border-color: var(--navbar-text, #d8cca3);
+  background-color: var(--navbar-hover-bg, rgba(216, 204, 163, 0.1));
+  transform: translateY(-1px);
+}
+
+.navbar-links li button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--navbar-focus-ring, rgba(216, 204, 163, 0.3));
+}
+
+/* Add a subtle animation when navbar becomes sticky */
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.navbar {
+  animation: slideDown 0.3s ease-out;
+}
+
+/* Responsive design for mobile */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0.75rem 1rem;
+  }
+  
+  .navbar-brand {
+    font-size: 1.3rem;
+  }
+  
+  .navbar-links {
+    gap: 1rem;
+  }
+  
+  .navbar-links li button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .navbar-links {
+    width: 100%;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  
+  .navbar-links li button {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+  }
+}
+
+.navbar-brand {
+  color: var(--navbar-text, #d8cca3);
+}
+
+.navbar-links li button {
+  color: var(--navbar-text, #d8cca3);
+}
+
+.navbar-links li button:hover {
+  border-color: var(--navbar-text, #d8cca3);
+  background-color: var(--navbar-hover-bg, rgba(216, 204, 163, 0.1));
+}

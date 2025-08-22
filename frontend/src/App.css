@@ -1,42 +1,52 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+:root {
+  /* Light theme */
+  --navbar-bg: #d8cca3;
+  --navbar-text: #456268;
+  --navbar-hover-bg: rgba(69, 98, 104, 0.1);
+  --navbar-focus-ring: rgba(69, 98, 104, 0.3);
+
+  --app-bg: #f8f5eb;  /* 🌟 light beige background (softer shade of navbar bg) */
+  --card-bg: #ffffff;
+  --text-primary: #2d3748;
+  --text-secondary: #4a5568;
+  --border-color: #e2e8f0;
+
+  /* Footer */
+  --footer-bg: #d8cca3;
+  --footer-text: #456268;
+  --footer-heading: #456268;
+  --footer-secondary-text: #2d3748; 
+  --footer-bottom-bg: #cbbf94;
+  --footer-border: #b7ab7e;
+
+  /* Landing page */
+  --highlight-bg: #ffffff;
+  --highlight-card-bg: #f4f1e4; /* light beige tint for consistency */
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
+.dark-theme {
+  /* Dark theme */
+  --navbar-bg: #456268;
+  --navbar-text: #d8cca3;
+  --navbar-hover-bg: rgba(216, 204, 163, 0.1);
+  --navbar-focus-ring: rgba(216, 204, 163, 0.3);
+  --navbar-focus-text: rgba(216, 204, 163, 0.3);
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
+  --app-bg: #1a202c;
+  --card-bg: #2d3748;
+  --text-primary: #e2e8f0;
+  --text-secondary: #a0aec0;
+  --border-color: #4a5568;
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
+  /* Footer */
+  --footer-bg: #2d3748;
+  --footer-text: #e2e8f0;
+  --footer-heading: #d8cca3;
+  --footer-secondary-text: #a0aec0;
+  --footer-bottom-bg: #1a202c;
+  --footer-border: #4a5568;
 
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+  /* Landing page */
+  --highlight-bg: #2d3748;
+  --highlight-card-bg: #1a202c;
 }

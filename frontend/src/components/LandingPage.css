@@ -1,0 +1,122 @@
+/* landingPage.css */
+.landing-page {
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Banner Section */
+.landing-page .landing-banner {
+  position: relative;
+  width: 100%;
+  height: 65vh;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(230, 230, 99, 0.3);
+}
+
+.landing-page .banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(60%);
+}
+
+.landing-page .banner-text {
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  transform: translateY(-50%);
+  color: white;
+  max-width: 600px;
+}
+
+.landing-page .banner-text h1 {
+  font-size: 3rem;
+  margin-bottom: 10px;
+}
+
+.landing-page .banner-text p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+.landing-page .cta-button {
+  padding: 12px 24px;
+  background-color: var(--navbar-bg, #d8cca3);
+  color: rgb(255, 255, 255);
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.landing-page .cta-button:hover {
+  background-color:  var(--navbar-bg, #d8cca3)
+}
+
+/* Issue Awareness Section */
+.landing-page .landing-issues {
+  padding: 60px 20px;
+  text-align: center;
+  background-color: var(--highlight-bg, #fdfcf8);
+}
+
+.landing-page .landing-issues h2 {
+  font-size: 2.2rem;
+  margin-bottom: 15px;
+  color: var(--navbar-text, #456268);
+}
+
+.landing-page .issue-intro {
+  font-size: 1.1rem;
+  max-width: 700px;
+  margin: 0 auto 40px;
+  color: #555;
+}
+
+.landing-page .issue-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 25px;
+}
+
+.landing-page .issue-card {
+  background-color: var(--highlight-card-bg, #fff);
+  padding: 20px;
+  width: 270px;
+  border-radius: 14px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.landing-page .issue-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.18);
+}
+
+.landing-page .issue-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.landing-page .issue-card h3 {
+  margin-bottom: 10px;
+  font-size: 1.3rem;
+  color: var(--navbar-text);
+}
+
+.landing-page .issue-card p {
+  font-size: 0.95rem;
+  color: var(--navbar-focus-text);
+  line-height: 1.5;
+}
+.landing-page .supreme{
+  font-weight: bold;
+  font-style: italic;
+  color : var(--navbar-text)
+
+}
