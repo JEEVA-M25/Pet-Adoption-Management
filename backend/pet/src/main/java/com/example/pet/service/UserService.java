@@ -58,28 +58,50 @@ public User createUser(User user) {
         return userRepository.findByEmail(email);
     }
 
-     public User updateUser(Long id, User updatedUser) {
-        return userRepository.findById(id).map(user -> {
+public User updateUser(Long id, User updatedUser) {
+    return userRepository.findById(id).map(user -> {
 
-            // Check uniqueness on update
-            if (!user.getUsername().equals(updatedUser.getUsername()) &&
-                userRepository.existsByUsername(updatedUser.getUsername())) {
-                throw new IllegalArgumentException("Username already exists");
-            }
+        // Username uniqueness check
+        if (updatedUser.getUsername() != null &&
+            !user.getUsername().equals(updatedUser.getUsername()) &&
+            userRepository.existsByUsername(updatedUser.getUsername())) {
+            throw new IllegalArgumentException("Username already exists");
+        }
 
-            if (!user.getEmail().equals(updatedUser.getEmail()) &&
-                userRepository.existsByEmail(updatedUser.getEmail())) {
-                throw new IllegalArgumentException("Email already exists");
-            }
+        // Email uniqueness check
+        if (updatedUser.getEmail() != null &&
+            !user.getEmail().equals(updatedUser.getEmail()) &&
+            userRepository.existsByEmail(updatedUser.getEmail())) {
+            throw new IllegalArgumentException("Email already exists");
+        }
 
+        // Update fields safely (only if provided)
+        if (updatedUser.getName() != null)
+            user.setName(updatedUser.getName());
+
+        if (updatedUser.getPhone() != null)
+            user.setPhone(updatedUser.getPhone());
+
+        if (updatedUser.getUsername() != null)
             user.setUsername(updatedUser.getUsername());
-            user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+
+        if (updatedUser.getEmail() != null)
             user.setEmail(updatedUser.getEmail());
+
+        if (updatedUser.getRole() != null)
             user.setRole(updatedUser.getRole());
+
+        if (updatedUser.getShelter() != null)
             user.setShelter(updatedUser.getShelter());
-            return userRepository.save(user);
-        }).orElse(null);
-    }
+
+        // Handle password only if provided
+        if (updatedUser.getPassword() != null && !updatedUser.getPassword().isBlank()) {
+            user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+        }
+
+        return userRepository.save(user);
+    }).orElse(null);
+}
 
 // OR Method 2: Using findById with proper error handling
     public boolean deleteUser(Long id) {

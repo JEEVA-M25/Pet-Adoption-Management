@@ -1,4 +1,3 @@
-// SecurityConfig.java
 package com.example.pet.security;
 
 import org.springframework.context.annotation.Bean;
@@ -25,16 +24,24 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http.csrf().disable()
+            .cors().and()  // enable CORS config
+            .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and()
             .authorizeHttpRequests(auth -> auth
-                // Temporarily allow all requests without authentication
-                .anyRequest().permitAll()
-            )
-            .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                // PUBLIC ENDPOINTS
+                .requestMatchers("/api/auth/**").permitAll()      // login
+                .requestMatchers("/api/users").permitAll()        // registration
+                .requestMatchers("/api/pets", "/api/pets/**").permitAll() // browsing pets
+                .requestMatchers("/api/shelters", "/api/shelters/**").permitAll()
 
-        // Optional: Keep JWT filter, but it won't block anything for now
+                // ALL OTHER REQUESTS REQUIRE AUTH
+                .anyRequest().authenticated()
+            );
+
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 

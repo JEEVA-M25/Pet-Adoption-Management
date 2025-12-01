@@ -109,4 +109,55 @@ public class ShelterService {
         Shelter shelter = getShelterById(shelterId);
         return shelter.getUsers();
     }
+    @Transactional
+public User convertExistingUserToOrgUser(Long shelterId, Long userId, String adminEmail) {
+
+    // 1. Check admin
+    User admin = userRepository.findByEmail(adminEmail)
+            .orElseThrow(() -> new RuntimeException("Admin user not found"));
+
+    if (!User.Role.ADMIN.equals(admin.getRole())) {
+        throw new RuntimeException("Only ADMIN can convert users");
+    }
+
+    // 2. Check shelter exists
+    Shelter shelter = repository.findById(shelterId)
+            .orElseThrow(() -> new RuntimeException("Shelter not found with id: " + shelterId));
+
+    // 3. Get user
+    User user = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+    // 4. Only PUBLIC_USER can be upgraded
+    if (!User.Role.PUBLIC_USER.equals(user.getRole())) {
+        throw new RuntimeException("Only PUBLIC_USER can be converted to ORG_USER");
+    }
+
+    // 5. Convert user
+    user.setRole(User.Role.ORG_USER);
+    user.setShelter(shelter);
+
+    // 6. Update relational mapping
+    shelter.getUsers().add(user);
+
+    return userRepository.save(user);
+}
+@Transactional
+public Shelter updateShelter(Long id, Shelter updated) {
+    Shelter shelter = repository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Shelter not found with id: " + id));
+
+    if (updated.getName() != null)
+        shelter.setName(updated.getName());
+
+    if (updated.getAddress() != null)
+        shelter.setAddress(updated.getAddress());
+
+    if (updated.getPhone() != null)
+        shelter.setPhone(updated.getPhone());
+
+    return repository.save(shelter);
+}
+
+
 }

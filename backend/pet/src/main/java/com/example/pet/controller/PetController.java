@@ -23,7 +23,7 @@ public class PetController {
     
     // ORG_USER only
     @PostMapping
-    // @PreAuthorize("hasRole('ORG_USER')")
+    @PreAuthorize("hasRole('ORG_USER')")
     public ResponseEntity<Pet> createPet(@RequestBody Pet pet, Authentication authentication) {
         String userEmail = authentication.getName();
         Pet createdPet = petService.createPet(pet, userEmail);

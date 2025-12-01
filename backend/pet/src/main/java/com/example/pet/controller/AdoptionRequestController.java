@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,12 +24,14 @@ public class AdoptionRequestController {
     }
 
     // ORG_USER and ADMIN only - view ALL requests
+    @PreAuthorize("hasAnyRole('ORG_USER','ADMIN')")
     @GetMapping
     public List<AdoptionRequest> getAllAdoptionRequests() {
         return adoptService.getAllAdoptionRequests();
     }
 
     // NEW: Any authenticated user can view THEIR OWN requests
+    @PreAuthorize("hasRole('PUBLIC_USER')")
     @GetMapping("/my-requests")
     public ResponseEntity<List<AdoptionRequest>> getMyAdoptionRequests(Authentication authentication) {
         String userEmail = authentication.getName();
@@ -37,6 +40,7 @@ public class AdoptionRequestController {
     }
 
     // Authenticated users can create requests
+    @PreAuthorize("hasRole('PUBLIC_USER')")
     @PostMapping
     public ResponseEntity<AdoptionRequest> createAdoptionRequest(
             @RequestBody AdoptionRequest adoptionRequest,
@@ -48,6 +52,7 @@ public class AdoptionRequestController {
     }
 
     // ORG_USER and ADMIN only - delete ANY request
+    @PreAuthorize("hasAnyRole('ORG_USER','ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteAdoptionRequest(@PathVariable Long id) {
         try {
@@ -59,6 +64,7 @@ public class AdoptionRequestController {
     }
 
     // ORG_USER and ADMIN only - update status
+    @PreAuthorize("hasAnyRole('ORG_USER','ADMIN')")
     @PatchMapping("/{id}")
     public ResponseEntity<?> updateAdoptionRequestStatus(
             @PathVariable Long id,
@@ -82,6 +88,7 @@ public class AdoptionRequestController {
     }
 
     // Users can delete their own requests
+    @PreAuthorize("hasRole('PUBLIC_USER')")
     @DeleteMapping("/me/{id}")
     public ResponseEntity<?> deleteOwnAdoptionRequest(
             @PathVariable Long id,

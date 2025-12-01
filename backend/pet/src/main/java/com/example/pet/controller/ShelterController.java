@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,7 +35,7 @@ public class ShelterController {
 
     // Admin only - automatically sets the creating admin as shelter admin
     @PostMapping
-    // @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public Shelter createShelter(@RequestBody Shelter shelter, Authentication authentication) {
         String adminEmail = authentication.getName(); // Get the logged-in admin's email
         return service.createShelter(shelter, adminEmail);
@@ -72,6 +73,7 @@ public class ShelterController {
     }
 
    // Only shelter admin can add ORG_USERs
+   @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{shelterId}/users")
     public User addOrgUser(@PathVariable Long shelterId,
                           @RequestBody User orgUser,
@@ -80,4 +82,22 @@ public class ShelterController {
         String adminEmail = authentication.getName(); // Get logged-in admin's email
         return service.addOrgUserToShelter(shelterId, orgUser, adminEmail);
     }
+    // Convert existing user → ORG_USER and assign to shelter
+@PutMapping("/{shelterId}/users/{userId}/make-org")
+@PreAuthorize("hasRole('ADMIN')")
+public User convertToOrgUser(
+        @PathVariable Long shelterId,
+        @PathVariable Long userId,
+        Authentication authentication) {
+
+    String adminEmail = authentication.getName();
+    return service.convertExistingUserToOrgUser(shelterId, userId, adminEmail);
+}
+
+@PutMapping("/{id}")
+@PreAuthorize("hasRole('ADMIN')")
+public Shelter updateShelter(@PathVariable Long id, @RequestBody Shelter shelter) {
+    return service.updateShelter(id, shelter);
+}
+
 }
