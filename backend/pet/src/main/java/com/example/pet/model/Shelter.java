@@ -1,3 +1,4 @@
+//Shelter.java
 package com.example.pet.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -29,10 +30,6 @@ public class Shelter {
     @NotBlank(message = "Phone must not be blank")
     @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Invalid phone number format")
     private String phone;
-
-        @OneToOne
-    @JoinColumn(name = "admin_id")
-    private User admin;
 
     @OneToMany(mappedBy = "shelter",  orphanRemoval = true)
     @JsonManagedReference("shelter-users")

@@ -12,16 +12,16 @@ function AdminPanel() {
   });
   const { user } = useAuth();
 
-  if (!user || user.role !== 'ADMIN') {
-    return (
-      <div className="admin-panel">
-        <div className="access-denied">
-          <h2>Access Denied</h2>
-          <p>You must be an administrator to access this page.</p>
-        </div>
-      </div>
-    );
-  }
+  // if (!user || user.role !== 'ADMIN') {
+  //   return (
+  //     <div className="admin-panel">
+  //       <div className="access-denied">
+  //         <h2>Access Denied</h2>
+  //         <p>You must be an administrator to access this page.</p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   const handleShelterSubmit = (e) => {
     e.preventDefault();

@@ -14,11 +14,16 @@ public class CorsConfig {
 
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**") // allow all endpoints
-                        .allowedOrigins("http://localhost:5175") // React frontend origin
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH")
-                        .allowedHeaders("*")
-                        .allowCredentials(true);
+
+                registry.addMapping("/**")
+                        .allowedOrigins(
+                                "http://localhost:5173",
+                                "http://localhost:5174",
+                                "http://localhost:5175"
+                        ) // allow any Vite port
+                        .allowedMethods("*")   // allow all methods
+                        .allowedHeaders("*")   // allow all headers
+                        .allowCredentials(true); // required for JWT / login later
             }
         };
     }

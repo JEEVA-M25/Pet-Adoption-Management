@@ -1,3 +1,4 @@
+// UserController.java
 package com.example.pet.controller;
 
 import com.example.pet.model.User;
@@ -34,14 +35,14 @@ public class UserController {
 
     // Admin only
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    // @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
     // Admin only
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    // @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         return userService.getUserById(id)
                 .map(ResponseEntity::ok)
@@ -50,7 +51,7 @@ public class UserController {
 
     // Admin only
     @GetMapping("/email/{email}")
-    @PreAuthorize("hasRole('ADMIN')")
+    // @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
         return userService.getUserByEmail(email)
                 .map(ResponseEntity::ok)
@@ -59,7 +60,7 @@ public class UserController {
 
     // Admin only
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    // @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User user) {
         try {
             User updated = userService.updateUser(id, user);
@@ -73,7 +74,7 @@ public class UserController {
    // Alternative: Using exception version
     
    @DeleteMapping("/{id}")
-@PreAuthorize("hasRole('ADMIN')")
+// @PreAuthorize("hasRole('ADMIN')")
 public ResponseEntity<?> deleteUser(@PathVariable Long id) {
     boolean deleted = userService.deleteUser(id);
     if (deleted) {

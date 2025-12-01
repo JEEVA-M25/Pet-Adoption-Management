@@ -1,3 +1,4 @@
+// GlobalExceptionHandler.java
 package com.example.pet.exception;
 
 import java.util.HashMap;

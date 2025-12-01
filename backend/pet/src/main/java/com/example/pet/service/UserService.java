@@ -1,3 +1,4 @@
+// UserService.java
 package com.example.pet.service;
 import com.example.pet.model.User;
 import com.example.pet.repository.UserRepository;
@@ -20,7 +21,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;   // <--- 
     }
     
-    // In your createUser method, set default role to PUBLIC_USER
+   // In your createUser method, set default role to PUBLIC_USER
 public User createUser(User user) {
     if (userRepository.existsByUsername(user.getUsername())) {
         throw new IllegalArgumentException("Username already exists");
@@ -28,12 +29,19 @@ public User createUser(User user) {
     if (userRepository.existsByEmail(user.getEmail())) {
         throw new IllegalArgumentException("Email already exists");
     }
-    
+
     // Set default role to PUBLIC_USER if not specified
     if (user.getRole() == null) {
         user.setRole(User.Role.PUBLIC_USER);
     }
-    
+
+    // ✅ Check if role is valid (only among ADMIN, ORG_USER, PUBLIC_USER)
+    if (user.getRole() != User.Role.ADMIN &&
+        user.getRole() != User.Role.ORG_USER &&
+        user.getRole() != User.Role.PUBLIC_USER) {
+        throw new IllegalArgumentException("Improper role specified");
+    }
+
     // Hash password before saving
     user.setPassword(passwordEncoder.encode(user.getPassword()));
     return userRepository.save(user);
