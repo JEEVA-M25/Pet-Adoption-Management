@@ -31,6 +31,31 @@ public class AdoptionRequestService {
         return adoptRepo.findAll();
     }
 
+    public List<AdoptionRequest> getRequestsForShelter(String orgUserEmail) {
+
+    // 1. Get ORG_USER
+    User orgUser = userRepo.findByEmail(orgUserEmail)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+    if (orgUser.getShelter() == null) {
+        throw new RuntimeException("ORG_USER is not assigned to any shelter");
+    }
+
+    Long shelterId = orgUser.getShelter().getId();
+
+    // 2. Fetch pets that belong to this shelter
+    List<Pet> petsFromShelter = petRepo.findPetsByShelterId(shelterId);
+
+    // 3. Extract pet IDs
+    List<Long> petIds = petsFromShelter.stream()
+            .map(Pet::getId)
+            .toList();
+
+    // 4. Get adoption requests for these pet IDs
+    return adoptRepo.findByPetIdIn(petIds);
+}
+
+
  public AdoptionRequest createAdoptionRequest(AdoptionRequest adoptionRequest, String userEmail) {
         // Get the authenticated user
         User applicant = userRepo.findByEmail(userEmail)

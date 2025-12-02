@@ -24,11 +24,23 @@ public class AdoptionRequestController {
     }
 
     // ORG_USER and ADMIN only - view ALL requests
-    @PreAuthorize("hasAnyRole('ORG_USER','ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping
     public List<AdoptionRequest> getAllAdoptionRequests() {
         return adoptService.getAllAdoptionRequests();
     }
+
+    // Req for my shelter - ORG_USER only
+    @PreAuthorize("hasRole('ORG_USER')")
+    @GetMapping("/shelter")
+    public ResponseEntity<List<AdoptionRequest>> getRequestsForMyShelter(Authentication auth) {
+
+        String orgUserEmail = auth.getName();
+        List<AdoptionRequest> requests = adoptService.getRequestsForShelter(orgUserEmail);
+
+        return ResponseEntity.ok(requests);
+    }
+
 
     // NEW: Any authenticated user can view THEIR OWN requests
     @PreAuthorize("hasRole('PUBLIC_USER')")

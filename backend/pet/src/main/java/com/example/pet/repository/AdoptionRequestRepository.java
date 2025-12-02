@@ -11,4 +11,5 @@ public interface AdoptionRequestRepository extends JpaRepository<AdoptionRequest
 
     // Add this method to your AdoptionRequestRepository
     List<AdoptionRequest> findByApplicantEmail(String email);
+    List<AdoptionRequest> findByPetIdIn(List<Long> petIds);
 }

@@ -27,6 +27,12 @@ public class PetService {
     {
         return petRepo.findAll();
     }
+
+public List<Pet> getPetsByStatus(String status) {
+    return petRepo.findByAdoptionStatusIgnoreCase(status);
+}
+
+
 // Updated method - automatically set the logged-in user as postedBy
         public Pet createPet(Pet pet, String userEmail) {
             User user = userRepo.findByEmail(userEmail)

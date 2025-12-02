@@ -73,4 +73,10 @@ public class PetController {
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/status/{status}")
+public ResponseEntity<List<Pet>> getPetsByStatus(@PathVariable String status) {
+    return ResponseEntity.ok(petService.getPetsByStatus(status));
+}
+
 }
