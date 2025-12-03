@@ -1,7 +1,8 @@
-// components/Register.js
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { toast } from "react-toastify";
+
 import './Auth.css';
 
 function Register() {
@@ -10,41 +11,88 @@ function Register() {
     username: '',
     email: '',
     password: '',
-    phone: '',
-    role: 'PUBLIC_USER'
+    phone: ''
   });
-  const [error, setError] = useState('');
+
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   
   const { register } = useAuth();
   const navigate = useNavigate();
 
+  // -------------------------------
+  // 🔍 FRONTEND VALIDATION LOGIC
+  // -------------------------------
+  const validate = () => {
+    const newErrors = {};
+
+    if (!formData.name.trim())
+      newErrors.name = "Name is required";
+
+    if (!formData.username.trim())
+      newErrors.username = "Username is required";
+    else if (/\s/.test(formData.username))
+      newErrors.username = "Username cannot contain spaces";
+
+    if (!formData.email.trim())
+      newErrors.email = "Email is required";
+    else if (!/^\S+@\S+\.\S+$/.test(formData.email))
+      newErrors.email = "Invalid email format";
+
+    if (!formData.password.trim())
+      newErrors.password = "Password is required";
+    else if (formData.password.length < 6)
+      newErrors.password = "Password must be at least 6 characters";
+
+    if (!formData.phone.trim())
+      newErrors.phone = "Phone number is required";
+    else if (!/^\d{10}$/.test(formData.phone))
+      newErrors.phone = "Phone number must be exactly 10 digits";
+
+    return newErrors;
+  };
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
-    const result = await register(formData);
-    
-    if (result.success) {
-      navigate('/login');
-    } else {
-      setError(result.error);
-    }
+  const validationErrors = validate();
+  if (Object.keys(validationErrors).length > 0) {
+    setErrors(validationErrors);
     setLoading(false);
-  };
+    return;
+  }
+
+  setErrors({});
+
+  const result = await register(formData);
+
+  if (result.success) {
+    // ✅ SUCCESS TOAST ONLY HERE
+    toast.success("🎉 User registered successfully!");
+    navigate('/login');
+  } else {
+    setErrors({ api: result.error });
+  }
+
+  setLoading(false);
+};
+
 
   return (
     <div className="auth-container">
       <div className="auth-form">
         <h2>Create an Account</h2>
-        {error && <div className="error-message">{error}</div>}
         
+        {errors.api && <div className="error-message">{errors.api}</div>}
+
         <form onSubmit={handleSubmit}>
+
+          {/* Name */}
           <div className="form-group">
             <label>Full Name</label>
             <input
@@ -52,10 +100,11 @@ function Register() {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              required
             />
+            {errors.name && <div className="error-text">{errors.name}</div>}
           </div>
-          
+
+          {/* Username */}
           <div className="form-group">
             <label>Username</label>
             <input
@@ -63,10 +112,11 @@ function Register() {
               name="username"
               value={formData.username}
               onChange={handleChange}
-              required
             />
+            {errors.username && <div className="error-text">{errors.username}</div>}
           </div>
-          
+
+          {/* Email */}
           <div className="form-group">
             <label>Email</label>
             <input
@@ -74,10 +124,11 @@ function Register() {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              required
             />
+            {errors.email && <div className="error-text">{errors.email}</div>}
           </div>
-          
+
+          {/* Password */}
           <div className="form-group">
             <label>Password</label>
             <input
@@ -85,33 +136,27 @@ function Register() {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              required
             />
+            {errors.password && <div className="error-text">{errors.password}</div>}
           </div>
-          
+
+          {/* Phone */}
           <div className="form-group">
-            <label>Phone</label>
+            <label>Phone (10 digits)</label>
             <input
               type="tel"
               name="phone"
               value={formData.phone}
               onChange={handleChange}
             />
+            {errors.phone && <div className="error-text">{errors.phone}</div>}
           </div>
-          
-          <div className="form-group">
-            <label>Account Type</label>
-            <select name="role" value={formData.role} onChange={handleChange}>
-              <option value="PUBLIC_USER">Pet Adopter</option>
-              <option value="ORG_USER">Shelter Organization</option>
-            </select>
-          </div>
-          
+
           <button type="submit" disabled={loading}>
             {loading ? 'Creating Account...' : 'Register'}
           </button>
         </form>
-        
+
         <p className="auth-link">
           Already have an account? <Link to="/login">Login here</Link>
         </p>

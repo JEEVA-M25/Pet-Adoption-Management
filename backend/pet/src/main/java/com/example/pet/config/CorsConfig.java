@@ -1,3 +1,4 @@
+//CorsConfig.java
 package com.example.pet.config;
 
 import org.springframework.context.annotation.Bean;

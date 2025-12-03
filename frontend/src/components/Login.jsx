@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { toast } from "react-toastify";
 import './Auth.css';
 
 function Login() {
@@ -13,20 +14,26 @@ function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError('');
+  setLoading(true);
 
-    const result = await login(email, password);
-    
-    if (result.success) {
-      navigate('/pets');
-    } else {
-      setError(result.error);
-    }
-    setLoading(false);
-  };
+  const result = await login(email, password);
+
+  if (result.success) {
+    toast.success("🎉 Login successful!");
+
+    if (result.role === 'ADMIN') navigate('/admin');
+    else if (result.role === 'ORG_USER') navigate('/my-pets');
+    else navigate('/pets');
+  } else {
+    toast.error(result.error || "Login failed");
+    setError(result.error);
+  }
+
+  setLoading(false);
+};
 
   return (
     <div className="auth-container">

@@ -1,5 +1,5 @@
 // utils/api.js
-import { API_BASE_URL } from './constants';
+import { API_BASE_URL } from './constants.js';
 
 // Helper function to get auth headers
 const getAuthHeaders = () => {
@@ -11,33 +11,37 @@ const getAuthHeaders = () => {
 };
 
 // Auth API calls
-export const login = (email, password) => {
-  return fetch(`${API_BASE_URL}/api/auth/login`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+export const login = async (email, password) => {
+  const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
-  })
-  .then(res => {
-    if (!res.ok) throw new Error('Login failed');
-    return res.json();
   });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => null);
+    throw new Error(errorData?.message || "Invalid credentials");
+  }
+
+  return res.json();
 };
+
 
 export const register = (userData) => {
   return fetch(`${API_BASE_URL}/api/users`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(userData),
   })
-  .then(res => {
-    if (!res.ok) throw new Error('Registration failed');
+  .then(async res => {
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => null);
+      throw new Error(errorData?.message || "Registration failed");
+    }
     return res.json();
   });
 };
+
 
 // GET all pets
 export const getPets = () => {
@@ -153,19 +157,14 @@ export const getShelters = () => {
 // User profile
 export const getCurrentUser = () => {
   const token = localStorage.getItem('token');
-  if (!token) return Promise.resolve(null);
-  
-  // Extract user info from token (simplified - in real app, you might want an API endpoint)
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return Promise.resolve({
-      email: payload.sub,
-      role: payload.role || 'PUBLIC_USER'
-    });
-  } catch (e) {
-    return Promise.resolve(null);
-  }
+  const role = localStorage.getItem('userRole');
+  const email = localStorage.getItem('userEmail');
+
+  if (!token || !role || !email) return null;
+
+  return { email, role };
 };
+
 
 // Logout
 export const logout = () => {

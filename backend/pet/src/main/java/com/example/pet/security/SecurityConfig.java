@@ -1,3 +1,4 @@
+//SecurityConfig.java
 package com.example.pet.security;
 
 import org.springframework.context.annotation.Bean;

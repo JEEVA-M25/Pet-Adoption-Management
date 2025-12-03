@@ -14,6 +14,9 @@ import Register from './components/Register';
 import MyRequests from './components/MyRequests';
 import MyPets from './components/MyPets';
 import AdminPanel from './components/AdminPanel';
+
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import './App.css';
 
 function App() {
@@ -21,6 +24,7 @@ function App() {
     <ThemeProvider>
       <AuthProvider>
         <div className="app">
+          <ToastContainer position="top-right" autoClose={2500} />
           <Navbar />
           <main className="main-content">
             <Routes>
