@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -56,6 +57,34 @@ public class PetController {
         return ResponseEntity.ok(petService.searchPetsByName(name));
     }
 
+    // my adopted pets
+    @PreAuthorize("hasRole('PUBLIC_USER')")
+@GetMapping("/my-adopted")
+public ResponseEntity<List<Pet>> getMyAdoptedPets(Authentication auth) {
+    String email = auth.getName();
+    return ResponseEntity.ok(petService.getAdoptedPets(email));
+}
+
+
+// PetController.java
+
+@PreAuthorize("hasRole('ORG_USER')")
+@GetMapping("/my-pets")
+public ResponseEntity<?> getMyPets(Authentication authentication) {
+
+    try {
+        String email = authentication.getName();
+        List<Pet> pets = petService.getPetsForOrgUser(email);
+        return ResponseEntity.ok(pets);
+
+    } catch (RuntimeException e) {
+        return ResponseEntity
+                .status(400)
+                .body(Map.of("message", e.getMessage()));
+    }
+}
+
+
     // ORG_USER only
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ORG_USER')")
@@ -78,5 +107,7 @@ public class PetController {
 public ResponseEntity<List<Pet>> getPetsByStatus(@PathVariable String status) {
     return ResponseEntity.ok(petService.getPetsByStatus(status));
 }
+
+
 
 }

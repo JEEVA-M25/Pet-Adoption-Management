@@ -58,4 +58,12 @@ public class Pet {
     @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference("pet-requests")
     private List<AdoptionRequest> adoptionRequests;
+
+    
+    // User who adopted this pet (if approved)
+    @ManyToOne
+    @JoinColumn(name = "adopted_by_id")
+    private User adoptedBy;
+
+
 }

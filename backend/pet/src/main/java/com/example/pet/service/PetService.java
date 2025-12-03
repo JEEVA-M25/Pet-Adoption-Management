@@ -32,6 +32,25 @@ public List<Pet> getPetsByStatus(String status) {
     return petRepo.findByAdoptionStatusIgnoreCase(status);
 }
 
+public List<Pet> getAdoptedPets(String userEmail) {
+    return petRepo.findByAdoptedByEmail(userEmail);
+}
+
+// PetService.java
+
+public List<Pet> getPetsForOrgUser(String email) {
+
+    User orgUser = userRepo.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+    if (orgUser.getShelter() == null) {
+        throw new RuntimeException("ORG_USER is not assigned to any shelter");
+    }
+
+    Long shelterId = orgUser.getShelter().getId();
+
+    return petRepo.findPetsByShelterId(shelterId);
+}
 
 // Updated method - automatically set the logged-in user as postedBy
         public Pet createPet(Pet pet, String userEmail) {

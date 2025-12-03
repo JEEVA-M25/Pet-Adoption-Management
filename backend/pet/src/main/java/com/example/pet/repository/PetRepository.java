@@ -15,5 +15,7 @@ public interface PetRepository extends JpaRepository<Pet,Long>{
     List<Pet> findByAdoptionStatusIgnoreCase(String status);
     @Query("SELECT p FROM Pet p WHERE p.postedBy.shelter.id = :shelterId")
     List<Pet> findPetsByShelterId(Long shelterId);
+    List<Pet> findByAdoptedByEmail(String email);
+
 
 }

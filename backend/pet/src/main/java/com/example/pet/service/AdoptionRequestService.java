@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.pet.model.AdoptionRequest;
 import com.example.pet.model.Pet;
@@ -86,30 +87,46 @@ public class AdoptionRequestService {
     }
 
 
+@Transactional
 public AdoptionRequest updateAdoptionRequest(Long id, AdoptionRequest updatedRequest) {
+
     AdoptionRequest existing = adoptRepo.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Adoption request not found with id: " + id));
 
     String newStatus = updatedRequest.getStatus();
+
     if (!List.of("Pending", "Approved", "Rejected").contains(newStatus)) {
         throw new IllegalArgumentException("Invalid status value: " + newStatus);
     }
 
-    // Optional: prevent invalid transitions
+    // Prevent going back from approved
     if (existing.getStatus().equals("Approved") && newStatus.equals("Pending")) {
         throw new IllegalArgumentException("Cannot revert from Approved to Pending");
     }
 
     existing.setStatus(newStatus);
 
-    // Optional: mark pet as adopted if request approved
+    // ★★★ AUTOMATIC REJECTION OF OTHER REQUESTS ★★★
     if ("Approved".equals(newStatus)) {
-        existing.getPet().setAdoptionStatus("Adopted");
-        petRepo.save(existing.getPet());
-    }
+
+    Pet pet = existing.getPet();
+
+    // 1. Mark pet as adopted
+    pet.setAdoptionStatus("Adopted");
+
+    // ⭐ NEW — Set adopter
+    pet.setAdoptedBy(existing.getApplicant());
+    
+    petRepo.save(pet);
+
+    // 2. Reject all other pending requests
+    adoptRepo.rejectOtherRequests(pet.getId(), existing.getId());
+}
+
 
     return adoptRepo.save(existing);
 }
+
     public void deleteOwnAdoptionRequest(Long requestId, String authEmail) {
         AdoptionRequest request = adoptRepo.findById(requestId)
             .orElseThrow(() -> new IllegalArgumentException("Adoption request not found"));
