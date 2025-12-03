@@ -144,6 +144,45 @@ export const createShelter = (shelterData) => {
   });
 };
 
+
+export const createOrgUserForShelter = (shelterId, userData) => {
+  return fetch(`${API_BASE_URL}/api/shelters/${shelterId}/org-user`, {
+    method: "POST",
+    headers: getAuthHeaders(),
+    body: JSON.stringify(userData),
+  })
+  .then(async res => {
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => null);
+      throw new Error(errorData?.message || "Failed to create org user");
+    }
+    return res.json();
+  });
+};
+
+
+export const getMyAdoptedPets = () => {
+  return fetch(`${API_BASE_URL}/api/pets/my-adopted`, {
+    headers: getAuthHeaders(),
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("Failed to fetch adopted pets");
+    return res.json();
+  });
+};
+
+
+export const getMyPets = () => {
+  return fetch(`${API_BASE_URL}/api/pets/my-pets`, {
+    headers: getAuthHeaders(),
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("Failed to fetch my pets");
+    return res.json();
+  });
+};
+
+
 export const getShelters = () => {
   return fetch(`${API_BASE_URL}/api/shelters`, {
     headers: getAuthHeaders()

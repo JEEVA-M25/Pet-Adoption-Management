@@ -1,4 +1,3 @@
-//SecurityConfig.java
 package com.example.pet.security;
 
 import org.springframework.context.annotation.Bean;
@@ -27,22 +26,49 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http.csrf().disable()
-            .cors().and()  // enable CORS config
+            .cors()
+            .and()
             .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeHttpRequests(auth -> auth
-                // PUBLIC ENDPOINTS
-                .requestMatchers("/api/auth/**").permitAll()      // login
-                .requestMatchers("/api/users").permitAll()        // registration
-                .requestMatchers("/api/pets", "/api/pets/**").permitAll() // browsing pets
-                .requestMatchers("/api/shelters", "/api/shelters/**").permitAll()
 
-                // ALL OTHER REQUESTS REQUIRE AUTH
+                // ---------------------------
+                // PUBLIC ENDPOINTS
+                // ---------------------------
+                .requestMatchers("/api/auth/**").permitAll()        // login
+                .requestMatchers("/api/users").permitAll()           // registration
+
+                // public read-only pet browsing
+                .requestMatchers("/api/pets", "/api/pets/search/**", "/api/pets/species/**", "/api/pets/status/**").permitAll()
+
+                // public list shelters ONLY
+                .requestMatchers("/api/shelters").permitAll()
+
+                // ---------------------------
+                // ADMIN ONLY
+                // ---------------------------
+                .requestMatchers("/api/shelters/**").hasRole("ADMIN")
+
+                // ---------------------------
+                // ORG USER ONLY
+                // ---------------------------
+                .requestMatchers("/api/pets/my-pets").hasRole("ORG_USER")
+                .requestMatchers("/api/pets/**").hasRole("ORG_USER") // create/update/delete pets
+
+                // ---------------------------
+                // PUBLIC USER ONLY
+                // ---------------------------
+                .requestMatchers("/api/pets/my-adopted").hasRole("PUBLIC_USER")
+
+                // ---------------------------
+                // EVERYTHING ELSE REQUIRES AUTH
+                // ---------------------------
                 .anyRequest().authenticated()
             );
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
@@ -52,7 +78,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
+            throws Exception {
         return config.getAuthenticationManager();
     }
 }
