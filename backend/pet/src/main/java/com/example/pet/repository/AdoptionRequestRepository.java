@@ -14,8 +14,10 @@ public interface AdoptionRequestRepository extends JpaRepository<AdoptionRequest
     // Add this method to your AdoptionRequestRepository
     List<AdoptionRequest> findByApplicantEmail(String email);
     List<AdoptionRequest> findByPetIdIn(List<Long> petIds);
+
     @Modifying
     @Query("UPDATE AdoptionRequest r SET r.status = 'Rejected' WHERE r.pet.id = :petId AND r.id <> :approvedRequestId")
     void rejectOtherRequests(Long petId, Long approvedRequestId);
 
+    
 }

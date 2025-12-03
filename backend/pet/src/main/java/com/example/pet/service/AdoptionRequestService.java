@@ -109,20 +109,15 @@ public AdoptionRequest updateAdoptionRequest(Long id, AdoptionRequest updatedReq
     // ★★★ AUTOMATIC REJECTION OF OTHER REQUESTS ★★★
     if ("Approved".equals(newStatus)) {
 
-    Pet pet = existing.getPet();
+        Pet pet = existing.getPet();
 
-    // 1. Mark pet as adopted
-    pet.setAdoptionStatus("Adopted");
+        // 1. Mark pet as adopted
+        pet.setAdoptionStatus("Adopted");
+        petRepo.save(pet);
 
-    // ⭐ NEW — Set adopter
-    pet.setAdoptedBy(existing.getApplicant());
-    
-    petRepo.save(pet);
-
-    // 2. Reject all other pending requests
-    adoptRepo.rejectOtherRequests(pet.getId(), existing.getId());
-}
-
+        // 2. Reject all other pending requests for this pet
+        adoptRepo.rejectOtherRequests(pet.getId(), existing.getId());
+    }
 
     return adoptRepo.save(existing);
 }

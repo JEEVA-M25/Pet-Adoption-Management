@@ -1,3 +1,4 @@
+/* App.css */
 :root {
   /* Light theme */
   --navbar-bg: #d8cca3;
@@ -49,4 +50,13 @@
   /* Landing page */
   --highlight-bg: #2d3748;
   --highlight-card-bg: #1a202c;
+}
+
+.app {
+  background: var(--app-bg);
+  min-height: 100vh;
+}
+body {
+  background: var(--app-bg);
+  transition: background 0.3s ease;
 }

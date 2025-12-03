@@ -1,7 +1,9 @@
+// SecurityConfig.java
 package com.example.pet.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -25,48 +27,46 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http.csrf().disable()
-            .cors()
-            .and()
-            .sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        http
+            .csrf().disable()
+            .cors().and()
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeHttpRequests(auth -> auth
 
-                // ---------------------------
-                // PUBLIC ENDPOINTS
-                // ---------------------------
-                .requestMatchers("/api/auth/**").permitAll()        // login
-                .requestMatchers("/api/users").permitAll()           // registration
+                // Authentication & registration (public)
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/users").permitAll()
 
-                // public read-only pet browsing
-                .requestMatchers("/api/pets", "/api/pets/search/**", "/api/pets/species/**", "/api/pets/status/**").permitAll()
+                // ---- Public read-only pet endpoints (allow GET only) ----
+                // Allow public GET for listing, details, search, status, species
+                .requestMatchers(HttpMethod.GET, "/api/pets", "/api/pets/**", "/api/pets/search/**", "/api/pets/species/**", "/api/pets/status/**")
+                    .permitAll()
 
-                // public list shelters ONLY
-                .requestMatchers("/api/shelters").permitAll()
+                // Allow public list shelters
+                .requestMatchers(HttpMethod.GET, "/api/shelters", "/api/shelters/**")
+                    .permitAll()
 
-                // ---------------------------
-                // ADMIN ONLY
-                // ---------------------------
+                // ---- Admin only endpoints ----
                 .requestMatchers("/api/shelters/**").hasRole("ADMIN")
 
-                // ---------------------------
-                // ORG USER ONLY
-                // ---------------------------
-                .requestMatchers("/api/pets/my-pets").hasRole("ORG_USER")
-                .requestMatchers("/api/pets/**").hasRole("ORG_USER") // create/update/delete pets
+                // ---- ORG_USER endpoints: create/update/delete and org-specific ----
+                // Protect any non-GET pet endpoints (creation / modification)
+                .requestMatchers(HttpMethod.POST, "/api/pets/**").hasRole("ORG_USER")
+                .requestMatchers(HttpMethod.PUT, "/api/pets/**").hasRole("ORG_USER")
+                .requestMatchers(HttpMethod.DELETE, "/api/pets/**").hasRole("ORG_USER")
 
-                // ---------------------------
-                // PUBLIC USER ONLY
-                // ---------------------------
+                // Org user's own endpoints
+                .requestMatchers("/api/pets/my-pets").hasRole("ORG_USER")
+
+                // Public user endpoints that require auth (example: my-adopted)
                 .requestMatchers("/api/pets/my-adopted").hasRole("PUBLIC_USER")
 
-                // ---------------------------
-                // EVERYTHING ELSE REQUIRES AUTH
-                // ---------------------------
+                // All other requests require authentication
                 .anyRequest().authenticated()
             );
 
+        // JWT filter
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
