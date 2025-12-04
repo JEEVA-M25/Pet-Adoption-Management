@@ -113,6 +113,9 @@ public AdoptionRequest updateAdoptionRequest(Long id, AdoptionRequest updatedReq
 
         // 1. Mark pet as adopted
         pet.setAdoptionStatus("Adopted");
+
+        pet.setAdoptedBy(existing.getApplicant());
+
         petRepo.save(pet);
 
         // 2. Reject all other pending requests for this pet

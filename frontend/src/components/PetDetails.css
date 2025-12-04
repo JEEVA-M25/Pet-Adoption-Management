@@ -14,14 +14,13 @@
 
 /* Decorative gradient overlay */
 .pet-details::before {
-  content: '';
+  content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 5px;
-  background: linear-gradient(90deg, #667eea, #764ba2, #f76c6c);
-  z-index: 1;
+  inset: 0;  /* covers full box */
+  border: 4px solid var(--navbar-bg);
+  border-radius: 25px; /* keep rounded corners */
+  pointer-events: none;
+  z-index: 2;
 }
 
 /* Loading and Error States */

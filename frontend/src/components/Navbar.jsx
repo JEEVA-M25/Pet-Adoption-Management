@@ -91,9 +91,7 @@ function Navbar() {
                     <Link to="/my-pets" onClick={() => setShowMenu(false)}>
                       My Pets
                     </Link>
-                    <Link to="/my-requests" onClick={() => setShowMenu(false)}>
-                      Adoption Requests (My Shelter)
-                    </Link>
+                    <Link to="/shelter-requests">Adoption Requests (My Shelter)</Link>
                   </>
                 )}
 

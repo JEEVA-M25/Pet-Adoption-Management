@@ -144,9 +144,30 @@ export const createShelter = (shelterData) => {
   });
 };
 
+export const getShelterAdoptionRequests = () => {
+  return fetch(`${API_BASE_URL}/api/adoption-requests/shelter`, {
+    headers: getAuthHeaders(),
+  })
+    .then(res => {
+      if (!res.ok) throw new Error("Failed to load adoption requests");
+      return res.json();
+    });
+};
+
+export const updateAdoptionStatus = (id, status) => {
+  return fetch(`${API_BASE_URL}/api/adoption-requests/${id}`, {
+    method: "PATCH",
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ status }),
+  }).then(res => {
+    if (!res.ok) throw new Error("Failed to update adoption status");
+    return res.json();
+  });
+};
+
 
 export const createOrgUserForShelter = (shelterId, userData) => {
-  return fetch(`${API_BASE_URL}/api/shelters/${shelterId}/org-user`, {
+  return fetch(`${API_BASE_URL}/api/shelters/${shelterId}/users`, {
     method: "POST",
     headers: getAuthHeaders(),
     body: JSON.stringify(userData),
@@ -159,6 +180,7 @@ export const createOrgUserForShelter = (shelterId, userData) => {
     return res.json();
   });
 };
+
 
 
 export const getMyAdoptedPets = () => {

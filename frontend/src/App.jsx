@@ -16,7 +16,7 @@ import MyRequests from "./components/MyRequests";
 import MyPets from "./components/MyPets";
 import AdminPanel from "./components/AdminPanel";
 import MyAdopted from "./components/MyAdopted";
-
+import OrgShelterRequests from "./components/OrgShelterRequests";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
@@ -82,7 +82,7 @@ function App() {
                 }
               />
 
-              {/* ORG_USER ROUTES */}
+                          {/* ORG_USER ROUTES */}
               <Route
                 path="/add-pet"
                 element={
@@ -102,6 +102,17 @@ function App() {
                   />
                 }
               />
+
+              <Route
+                path="/shelter-requests"
+                element={
+                  <ProtectedRoute
+                    element={<OrgShelterRequests />}
+                    roles={["ORG_USER"]}
+                  />
+                }
+              />
+
 
               {/* ADMIN ROUTE */}
               <Route
