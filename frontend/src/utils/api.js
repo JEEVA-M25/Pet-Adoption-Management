@@ -181,6 +181,33 @@ export const createOrgUserForShelter = (shelterId, userData) => {
   });
 };
 
+export const updateShelter = (id, data) => {
+  return fetch(`${API_BASE_URL}/api/shelters/${id}`, {
+    method: "PUT",
+    headers: getAuthHeaders(),
+    body: JSON.stringify(data),
+  }).then(res => res.json());
+};
+
+export const deleteShelter = (id) => {
+  return fetch(`${API_BASE_URL}/api/shelters/${id}`, {
+    method: "DELETE",
+    headers: getAuthHeaders(),
+  });
+};
+
+export const getAllUsers = () => {
+  return fetch(`${API_BASE_URL}/api/users`, {
+    headers: getAuthHeaders(),
+  }).then(res => res.json());
+};
+
+export const deleteUser = (id) => {
+  return fetch(`${API_BASE_URL}/api/users/${id}`, {
+    method: "DELETE",
+    headers: getAuthHeaders(),
+  });
+};
 
 
 export const getMyAdoptedPets = () => {
